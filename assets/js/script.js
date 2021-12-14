@@ -44,9 +44,6 @@ var saveTasks = function() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
-
-
-
 // modal was triggered
 $("#task-form-modal").on("show.bs.modal", function() {
   // clear values
@@ -81,33 +78,32 @@ $("#task-form-modal .btn-primary").click(function() {
   }
 });
 
-// remove all tasks
-$("#remove-tasks").on("click", function() {
-  for (var key in tasks) {
-    tasks[key].length = 0;
-    $("#list-" + key).empty();
-  }
-  saveTasks();
-});
-
+// task text was clicked
 $(".list-group").on("click", "p", function() {
+  // get current text of p element
   var text = $(this)
     .text()
     .trim();
-    
-  var textInput = $("<textarea>")
-    .addClass("form-control")
-    .val(text);
+
+  // replace p element w/ a new textarea
+    var textInput = $("<textarea>")
+      .addClass("form-control")
+      .val(text);
     $(this).replaceWith(textInput);
     textInput.trigger("focus");
-  });
 
+  // automatically focus on new element
+  textInput.trigger("focus");
+});
+
+// editable field was un-focused
 $(".list-group").on("blur", "textarea", function() {
   // get the textarea's current value/text
   var text = $(this)
     .val()
     .trim();
 
+  // get status type and position in the list
   // get the parent ul's id attribute
   var status = $(this)
     .closest(".list-group")
@@ -119,6 +115,7 @@ $(".list-group").on("blur", "textarea", function() {
     .closest(".list-group-item")
     .index();
 
+  // update task in array and re-save to localstorage
   tasks[status][index].text = text;
   saveTasks();
 
@@ -127,7 +124,7 @@ $(".list-group").on("blur", "textarea", function() {
     .addClass("m-1")
     .text(text);
 
-  // replace textarea with p element
+  // replace textarea with p element (new content)
   $(this).replaceWith(taskP);
 });
 
@@ -147,7 +144,7 @@ $(".list-group").on("click", "span", function() {
   // swap out elements
   $(this).replaceWith(dateInput);
 
-  // automatically focus on new element
+  // automatically bring up the calendar
   dateInput.trigger("focus");
 });
 
@@ -158,6 +155,7 @@ $(".list-group").on("blur", "input[type='text']", function() {
     .val()
     .trim();
 
+  // get status type and position in the list
   // get the parent ul's id attribute
   var status = $(this)
     .closest(".list-group")
@@ -182,7 +180,14 @@ $(".list-group").on("blur", "input[type='text']", function() {
   $(this).replaceWith(taskSpan);
 });
 
+// remove all tasks
+$("#remove-tasks").on("click", function() {
+  for (var key in tasks) {
+    tasks[key].length = 0;
+    $("#list-" + key).empty();
+  }
+  saveTasks();
+});
+
 // load tasks for the first time
 loadTasks();
-
-
