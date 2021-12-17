@@ -82,17 +82,27 @@ $(".card .list-group").sortable({
   scroll: false,
   tolerance: "pointer",
   helper: "clone",
+  // in activate method use jQuery to select 'this' and add class dropover
   activate: function(event, ui) {
-    console.log(ui);
+    $(this).addClass("dropover");
+    // in activate method, use jQuery to select .bottom-trash and add bottom-trash-drag class
+    $(".bottom-trash").addClass(".bottom-trash-drag");
   },
+  // in deactivate method use jQuery to select 'this' and remove class dropover
   deactivate: function(event, ui) {
-    console.log(ui);
+    $(this).removeClass("dropover");
+    // in deactivate method, use jQuery to select .bottom-trash and remove bottom-trash-drag class
+    $(".bottom-trash").removeClass("bottom-trash-drag");
   },
+
+  // in over method use jQuery to select 'event.target' and add class of dropover-active
   over: function(event) {
-    console.log(event);
+    $(event.target).addClass("dropover-active");
   },
+
+  // in out method use jQuery to select 'event.target' and remove class of dropover-active
   out: function(event) {
-    console.log(event);
+    $(event.target).removeClass("dropover-active");
   },
   update: function() {
     var tempArr = [];
@@ -135,12 +145,20 @@ $("#trash").droppable({
   drop: function(event, ui) {
     // remove dragged element from the dom
     ui.draggable.remove();
+    // in droppable method's drop method, use jQuery to select  
+    // .bottom-trash and remove the bottom-trash-active class 
+    $("bottom-trash").removeClass("bottom-trash-active");
   },
   over: function(event, ui) {
-    console.log(ui);
+    //in .droppable Over method, use jQuery to select .bottom-trash and add the bottom-trash-active
+    $("bottom-trash").addClass("bottom-trash-active");
   },
+
+
   out: function(event, ui) {
-    console.log(ui);
+    // in droppable method's out method, use jQuery to select  
+    // .bottom-trash and remove the bottom-trash-active class 
+    $("bottom-trash").removeClass("bottom-trash-active");
   }
 });
 
@@ -162,7 +180,7 @@ $("#task-form-modal").on("shown.bs.modal", function() {
 });
 
 // save button in modal was clicked
-$("#task-form-modal .btn-primary").click(function() {
+$("#task-form-modal .btn-save").click(function() {
  // get form values
   var taskText = $("#modalTaskDescription").val();
   var taskDate = $("#modalDueDate").val();
@@ -288,6 +306,13 @@ $("#remove-tasks").on("click", function() {
   console.log(tasks);
   saveTasks();
 });
+
+setInterval(function() {
+  $(".card .list-group-item").each(function(index, el) {
+    auditTask(el);
+  });
+  // code to execute, multiply 1000 milliseconds by 60 seconds by minutes; goal is 30 min
+}, (1000 * 60 ) * 30);
 
 // load tasks for the first time
 loadTasks();
